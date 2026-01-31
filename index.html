@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamified Habit Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+TC:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>🏆 Level Rewards</h3>
+            <button class="close-btn" onclick="toggleSidebar()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="sidebar-content">
+            <ul id="level-list">
+                </ul>
+        </div>
+
+        <div class="sidebar-footer" id="sidebar-settings" style="display: none;">
+            <button class="settings-btn" onclick="changeBackground()">
+                <i class="fa-solid fa-gear"></i> 自訂背景風格
+            </button>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <button class="menu-btn" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <button class="tutorial-btn" onclick="restartTutorial()">
+            <i class="fa-solid fa-book-open"></i>
+        </button>
+
+        <div class="hud-display">
+            <div class="level-info">
+                <span id="level-display">
+                    <i id="level-icon" class="fa-solid fa-seedling"></i> 
+                    LV. 1 Novice
+                </span>
+                <span id="xp-text">0 / 100 XP</span>
+            </div>
+            <div class="xp-bar-container">
+                <div class="xp-bar-fill" id="xp-bar"></div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <div class="custom-select-wrapper">
+                <div class="custom-select" id="custom-select">
+                    <div class="select-trigger">
+                        <i class="fa-solid fa-dungeon"></i>
+                    </div>
+                    <div class="custom-options">
+                        <span class="custom-option selected" data-value="fa-dungeon"><i class="fa-solid fa-dungeon"></i></span>
+                        <span class="custom-option" data-value="fa-dumbbell"><i class="fa-solid fa-dumbbell"></i></span>
+                        <span class="custom-option" data-value="fa-book-skull"><i class="fa-solid fa-book-skull"></i></span>
+                        <span class="custom-option" data-value="fa-code"><i class="fa-solid fa-code"></i></span>
+                        <span class="custom-option" data-value="fa-glass-water"><i class="fa-solid fa-glass-water"></i></span>
+                        <span class="custom-option" data-value="fa-bed"><i class="fa-solid fa-bed"></i></span>
+                        <span class="custom-option" data-value="fa-carrot"><i class="fa-solid fa-carrot"></i></span>
+                        <span class="custom-option" data-value="fa-broom"><i class="fa-solid fa-broom"></i></span>
+                        <span class="custom-option" data-value="fa-gamepad"><i class="fa-solid fa-gamepad"></i></span>
+                        <span class="custom-option" data-value="fa-guitar"><i class="fa-solid fa-guitar"></i></span>
+                    </div>
+                </div>
+                <input type="hidden" id="selected-icon-value" value="fa-dungeon">
+            </div>
+
+            <input type="text" id="habit-input" placeholder="輸入新的任務...">
+            <button class="add-btn" onclick="addHabit()">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+        </div>
+
+        <ul id="habit-list"></ul>
+    </div>
+
+    <div class="level-up-overlay" id="level-up-popup">
+        <div class="level-up-content">
+            <div class="level-up-title">LEVEL UP!</div>
+            
+            <div class="badge-container">
+                <div class="badge-glow"></div>
+                <i id="level-up-badge-icon" class="fa-solid fa-scroll"></i>
+            </div>
+            
+            <div class="level-up-info">
+                <div id="level-up-rank">Apprentice</div>
+                <div id="level-up-desc">恭喜！你已獲得「學徒」徽章</div>
+            </div>
+
+            <button class="claim-reward-btn" onclick="closeLevelUpPopup()">
+                <i class="fa-solid fa-hand-holding-medical"></i> 領取獎勵
+            </button>
+        </div>
+    </div>
+
+    <div id="tutorial-overlay" class="tutorial-overlay">
+        <div class="tutorial-box">
+            <h3 id="tut-title">歡迎來到習慣冒險！</h3>
+            <p id="tut-desc">準備好開始你的旅程了嗎？讓我帶你熟悉環境。</p>
+            <div class="tut-footer">
+                <div class="step-dots" id="tut-dots">
+                    </div>
+                
+                <div class="tut-btn-group">
+                    <button class="prev-btn" id="tut-prev-btn" onclick="prevTutorialStep()">
+                        <i class="fa-solid fa-chevron-left"></i> 上一步
+                    </button>
+                    
+                    <button class="tut-btn" id="tut-next-btn" onclick="nextTutorialStep()">
+                        下一步 <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            <button class="skip-btn" onclick="endTutorial()">跳過教學</button>
+        </div>
+    </div>
+    
+    <div id="theme-modal" class="theme-modal">
+        <div class="theme-content">
+            <div class="theme-header">
+                <h3>🎨 自訂背景風格</h3>
+                <button class="close-theme-btn" onclick="closeThemeModal()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+
+            <div class="theme-section">
+                <h4><i class="fa-solid fa-fill-drip"></i> 純色背景 (Solid)</h4>
+                <div class="control-row">
+                    <input type="color" id="solid-color-picker" value="#1a1a2e">
+                    <button class="theme-action-btn" onclick="applySolidBg()">套用純色</button>
+                </div>
+            </div>
+
+            <div class="theme-section">
+                <h4><i class="fa-solid fa-rainbow"></i> 流光漸層 (Gradient)</h4>
+                <div class="control-row gradient-row">
+                    <input type="color" id="grad-start" value="#0f3460">
+                    <i class="fa-solid fa-arrow-right-long" style="color:#888"></i>
+                    <input type="color" id="grad-end" value="#e94560">
+                </div>
+                <button class="theme-action-btn full-width" onclick="applyGradientBg()">生成並套用漸層</button>
+            </div>
+
+            <div class="theme-footer">
+                <button class="reset-bg-btn" onclick="resetBackground()">
+                    <i class="fa-solid fa-rotate-left"></i> 恢復預設背景
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,1218 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Press+Start+2P&family=Roboto:wght@400;700&display=swap');
+
+:root {
+    --bg-color: #1a1a2e;
+    --card-bg: #16213e;
+    --accent-color: #0f3460;
+    --highlight: #e94560;
+    --text-color: #fff;
+    --neon-green: #00ff9d;
+    --neon-blue: #00eaff;
+    --sidebar-width: 330px;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Roboto','Noto Sans TC', sans-serif;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+}
+
+/* --- 頂部狀態欄 (HUD) --- */
+.hud-display {
+    background: linear-gradient(145deg, var(--card-bg), #1a1a2e);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    margin-bottom: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.level-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-family: 'Press Start 2P', cursive; /* 像素風格字體 */
+    font-size: 0.8rem;
+    color: var(--neon-blue);
+}
+
+.xp-bar-container {
+    width: 100%;
+    height: 20px;
+    background-color: #0f3460;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+}
+
+.xp-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-green));
+    transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 0 10px var(--neon-green);
+}
+
+/* --- 輸入區塊 --- */
+.input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+input[type="text"] {
+    flex: 1;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    background: var(--card-bg);
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+    transition: 0.3s;
+}
+
+input[type="text"]:focus {
+    box-shadow: 0 0 0 2px var(--neon-blue);
+}
+
+/* 圖示選擇下拉選單 */
+select#icon-select {
+    padding: 10px;
+    border-radius: 10px;
+    background: var(--card-bg);
+    color: white;
+    border: none;
+    font-family: 'FontAwesome', 'Roboto'; 
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+button.add-btn {
+    padding: 15px 20px;
+    border: none;
+    border-radius: 10px;
+    background: var(--highlight);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s;
+    box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+}
+
+button.add-btn:active {
+    transform: scale(0.95);
+}
+
+/* --- 習慣列表 --- */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+.habit-item {
+    background: rgba(22, 33, 62, 0.8);
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+    border-left: 5px solid var(--neon-blue);
+    backdrop-filter: blur(5px);
+    animation: slideIn 0.3s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.habit-item:hover {
+    transform: translateX(5px);
+    box-shadow: -5px 5px 15px rgba(0,0,0,0.3);
+}
+
+.habit-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+    cursor: pointer;
+}
+
+.habit-icon {
+    font-size: 1.5rem;
+    color: var(--neon-blue);
+    width: 30px;
+    text-align: center;
+}
+
+.habit-text {
+    font-size: 1.1rem;
+}
+
+/* 完成狀態樣式 */
+.habit-item.completed {
+    background: rgba(22, 33, 62, 0.4);
+    border-left-color: var(--neon-green);
+    opacity: 0.7;
+}
+
+.habit-item.completed .habit-text {
+    text-decoration: line-through;
+    color: #6c757d;
+}
+
+.habit-item.completed .habit-icon {
+    color: var(--neon-green);
+}
+
+/* 刪除按鈕 */
+.delete-btn {
+    background: transparent;
+    border: none;
+    color: #ff5e78;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 5px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.habit-item:hover .delete-btn {
+    opacity: 1;
+}
+
+/* --- Level Up Modal --- */
+.level-up-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(5px);
+}
+
+.level-up-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.level-up-content {
+    background: linear-gradient(145deg, #1e1e2f, #16213e);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    border: 2px solid var(--neon-blue);
+    box-shadow: 0 0 50px rgba(0, 234, 255, 0.3);
+    max-width: 400px;
+    width: 90%;
+    transform: scale(0.8);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.level-up-overlay.active .level-up-content {
+    transform: scale(1);
+}
+
+.level-up-title {
+    color: var(--neon-green);
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px var(--neon-green);
+    animation: textPulse 1s infinite alternate;
+}
+
+@keyframes textPulse {
+    from { text-shadow: 0 0 10px var(--neon-green); }
+    to { text-shadow: 0 0 20px var(--neon-green), 0 0 40px var(--neon-green); }
+}
+
+/* 徽章容器 */
+.badge-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 徽章背後的發光 */
+.badge-glow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--neon-blue) 0%, transparent 70%);
+    opacity: 0.5;
+    animation: rotateGlow 3s linear infinite;
+}
+
+/* 徽章 Icon 本體 */
+#level-up-badge-icon {
+    font-size: 5rem;
+    color: #fff;
+    z-index: 2;
+    filter: drop-shadow(0 0 10px var(--neon-blue));
+    animation: floatBadge 2s ease-in-out infinite;
+}
+
+@keyframes floatBadge {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.level-up-info {
+    margin-bottom: 30px;
+}
+
+#level-up-rank {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--neon-blue);
+    margin-bottom: 5px;
+    font-family: 'Press Start 2P', cursive;
+}
+
+#level-up-desc {
+    color: #bbb;
+    font-size: 0.9rem;
+}
+
+/* 領取按鈕 */
+.claim-reward-btn {
+    background: linear-gradient(90deg, var(--highlight), #ff2e63);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-size: 1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(233, 69, 96, 0.5);
+    transition: 0.2s;
+}
+
+.claim-reward-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(233, 69, 96, 0.8);
+}
+
+.level-up-text {
+    font-family: 'Press Start 2P', cursive;
+    color: var(--neon-green);
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px var(--neon-green);
+}
+
+/* --- 自定義下拉選單 --- */
+.custom-select-wrapper {
+    position: relative;
+    user-select: none;
+    width: 60px;
+}
+
+.custom-select {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.select-trigger {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--card-bg);
+    color: var(--neon-blue);
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+    transition: 0.3s;
+    font-size: 1.2rem;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.select-trigger:hover {
+    background: #1f2e50;
+    box-shadow: 0 0 5px var(--neon-blue);
+}
+
+/* 下拉選單本體 */
+.custom-options {
+    position: absolute;
+    top: 110%; 
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 100;
+    overflow: hidden;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* 當選單打開時的狀態 */
+.custom-select.open .custom-options {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.custom-select.open .select-trigger {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    box-shadow: 0 0 10px var(--neon-blue);
+}
+
+/* 單個選項樣式 */
+.custom-option {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    font-size: 1.2rem;
+    color: #888;
+    cursor: pointer;
+    transition: 0.2s;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.custom-option:last-child {
+    border-bottom: none;
+}
+
+.custom-option:hover {
+    background: var(--accent-color);
+    color: var(--neon-green);
+    padding-left: 15px; /* 懸停時稍微移動 */
+}
+
+.custom-option.selected {
+    color: var(--neon-blue);
+    background: rgba(0, 234, 255, 0.1);
+}
+
+/* 捲軸美化 */
+.custom-options::-webkit-scrollbar {
+    width: 5px;
+}
+.custom-options::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 5px;
+}
+
+.menu-btn {
+    position: fixed;
+    top: 20px;     
+    left: 20px;   
+    background: rgba(22, 33, 62, 0.8); 
+    padding: 10px;  
+    border-radius: 50%; 
+    border: 1px solid var(--neon-blue);
+    color: var(--neon-blue);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 1100; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+}
+
+.menu-btn:hover {
+    background: var(--neon-blue);
+    color: var(--bg-color);
+    box-shadow: 0 0 15px var(--neon-blue);
+}
+
+/* --- 遮罩 --- */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 900;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+}
+
+.overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* --- 側邊欄主體 --- */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: calc(var(--sidebar-width) * -1);
+    width: var(--sidebar-width);
+    height: 100%;
+    background: rgba(22, 33, 62, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+    z-index: 1000;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-right: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+/* 側邊欄標題區 */
+.sidebar-header {
+    padding: 90px 20px 20px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    color: var(--neon-green);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.9rem;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.close-btn:hover {
+    color: var(--highlight);
+    transform: rotate(90deg);
+}
+
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+/* --- 側邊欄內的等級清單樣式 --- */
+#level-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.level-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    opacity: 0.5;
+    filter: grayscale(0.8);
+    transition: 0.3s;
+}
+
+/* 已解鎖狀態 */
+.level-row.unlocked {
+    opacity: 1;
+    filter: grayscale(0);
+}
+
+/* 當前等級 */
+.level-row.current {
+    border: 1px solid var(--neon-blue);
+    background: rgba(0, 234, 255, 0.1);
+    border-radius: 10px;
+    padding: 10px;
+    margin: -10px -10px 10px -10px;
+}
+
+/* 等級圖示圓圈 */
+.level-badge {
+    width: 40px;
+    height: 40px;
+    background: var(--card-bg);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    border: 2px solid #555;
+    font-size: 1.2rem;
+    color: #aaa;
+    flex-shrink: 0;
+}
+
+.level-row.unlocked .level-badge {
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+    box-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+}
+
+/* 文字詳情 */
+.level-details h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+.level-details p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #bbb;
+    line-height: 1.5;
+}
+
+/* --- Onboarding --- */
+.tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85); 
+    z-index: 3000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+}
+
+.tutorial-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.tutorial-box {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    border: 2px solid var(--neon-blue);
+    box-shadow: 0 0 20px var(--neon-blue);
+    position: relative;
+    text-align: center;
+    animation: floatUp 0.5s ease-out;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.tutorial-box h3 {
+    color: var(--neon-green);
+    font-family: 'Press Start 2P', cursive;
+    margin-top: 15px;
+    line-height: 1.5;
+    font-size: 1rem;
+}
+
+.tutorial-box p {
+    color: #ddd;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+/* 按鈕區 */
+.tut-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.tut-btn {
+    background: var(--highlight);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(233, 69, 96, 0.4);
+    transition: 0.2s;
+}
+
+.tut-btn:hover {
+    transform: scale(1.05);
+}
+
+.skip-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    color: #666;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.skip-btn:hover {
+    color: #fff;
+}
+
+/* 進度圓點 */
+.step-dots {
+    display: flex;
+    gap: 5px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background: #333;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.dot.active {
+    background: var(--neon-blue);
+    box-shadow: 0 0 5px var(--neon-blue);
+}
+
+/* --- Spotlight Highlight --- */
+.highlight-element {
+    position: relative;
+    z-index: 3001;
+    box-shadow: 0 0 0 5px var(--neon-green), 0 0 30px var(--neon-green) !important;
+    border-radius: 10px;
+    background: var(--bg-color);
+    pointer-events: none;
+}
+
+.menu-btn.highlight-element,
+.tutorial-btn.highlight-element {
+    position: fixed !important;
+    z-index: 3002 !important;
+    border-radius: 50%;
+    background: #1a1a2e; 
+    box-shadow: 0 0 0 5px var(--neon-green), 0 0 30px var(--neon-green) !important;
+}
+
+.tut-btn-group {
+    display: flex;
+    gap: 10px;
+}
+
+.prev-btn {
+    background: transparent;
+    color: #888;
+    border: 1px solid #888;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
+.prev-btn:hover {
+    color: white;
+    border-color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* --- 右上角教學書本按鈕 --- */
+.tutorial-btn {
+    position: fixed;
+    top: 20px;  
+    right: 20px; 
+    background: rgba(22, 33, 62, 0.8);
+    padding: 10px;
+    border-radius: 50%;
+    border: 1px solid var(--neon-blue);
+    color: var(--neon-blue);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 1100; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+}
+
+.tutorial-btn:hover {
+    background: var(--neon-blue);
+    color: var(--bg-color);
+    box-shadow: 0 0 15px var(--neon-blue);
+    transform: rotate(-5deg);
+}
+
+/* --- HUD 等級徽章專屬特效 --- */
+.hud-level-icon {
+    margin-right: 12px;
+    font-size: 1.3rem;
+    vertical-align: middle;
+    transition: all 0.5s ease;
+}
+
+/* LV.1 Novice - 柔和綠光 */
+.badge-lv1 { 
+    color: var(--neon-green); 
+    text-shadow: 0 0 5px rgba(0, 255, 157, 0.7), 0 0 15px rgba(0, 255, 157, 0.2);
+}
+
+/* LV.2 Apprentice - 靜謐藍光 */
+.badge-lv2 { 
+    color: var(--neon-blue); 
+    text-shadow: 0 0 6px rgba(0, 234, 255, 0.7), 0 0 15px rgba(0, 234, 255, 0.2);
+}
+
+/* LV.3 Warrior - 內斂紅光 */
+.badge-lv3 { 
+    color: #ff2e63; 
+    text-shadow: 0 0 6px rgba(255, 46, 99, 0.7), 0 0 20px rgba(255, 46, 99, 0.2);
+}
+
+/* LV.4 Knight - 騎士銀光 */
+.badge-lv4 { 
+    color: #e0e0e0; 
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.6), 0 0 15px rgba(157, 0, 255, 0.3);
+}
+
+/* LV.5 Master - 呼吸金光 */
+.badge-lv5 { 
+    color: #ffd700; 
+    animation: goldPulseVis 3s infinite alternate;
+}
+
+@keyframes goldPulseVis {
+    from { text-shadow: 0 0 5px rgba(255, 215, 0, 0.6); }
+    to { text-shadow: 0 0 15px rgba(255, 140, 0, 0.6), 0 0 20px rgba(255, 140, 0, 0.2); }
+}
+
+/* LV.6 Legend - 流動虹光 */
+.badge-lv6 {
+    color: #fff;
+    animation: rainbowGlowVis 4s linear infinite;
+}
+
+@keyframes rainbowGlowVis {
+    0% { text-shadow: 0 0 8px rgba(255, 0, 222, 0.6); }
+    33% { text-shadow: 0 0 8px rgba(0, 234, 255, 0.6); }
+    66% { text-shadow: 0 0 8px rgba(0, 255, 157, 0.6); }
+    100% { text-shadow: 0 0 8px rgba(255, 0, 222, 0.6); }
+}
+
+/* --- LV.3 戰士專屬：火焰打擊特效 --- */
+@keyframes shake-strike {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-5px) rotate(-2deg); }
+    40% { transform: translateX(5px) rotate(2deg); }
+    60% { transform: translateX(-5px) rotate(-2deg); }
+    80% { transform: translateX(5px) rotate(2deg); }
+    100% { transform: translateX(0); }
+}
+
+.habit-item.warrior-impact {
+    animation: shake-strike 0.4s ease-in-out;
+    border-left-color: #ff4500 !important; 
+    background: rgba(100, 20, 20, 0.8) !important; 
+    box-shadow: 0 0 20px rgba(255, 69, 0, 0.6); 
+}
+
+.habit-item.warrior-impact .habit-text,
+.habit-item.warrior-impact .habit-icon {
+    color: #ff4500 !important;
+    text-shadow: 0 0 8px #ff0000;
+    text-decoration: line-through;
+}
+
+.habit-item.warrior-impact {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #ff4500 !important;
+    background: #330000 !important;
+    animation: shake-strike 0.4s ease-in-out;
+}
+
+.habit-item.warrior-impact::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://media.giphy.com/media/3o72FfM5HJydzafgUE/giphy.gif'); 
+    background-size: cover;
+    background-position: center bottom;
+    opacity: 0.5;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* --- LV.4 騎士獎勵：聖騎士淺色主題 --- */
+
+body.light-theme {
+    --bg-color: #f0f2f5;
+    --card-bg: #ffffff;
+    --accent-color: #dfe6e9;
+    --highlight: #0984e3;
+    --text-color: #2d3436;
+    --neon-green: #00b894;
+    --neon-blue: #0984e3;
+}
+
+/* 淺色模式下的 HUD 微調 (讓它看起來像金屬面板) */
+body.light-theme .hud-display {
+    background: linear-gradient(145deg, #ffffff, #dfe6e9);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid #fff;
+}
+
+/* 淺色模式下的輸入框 */
+body.light-theme input[type="text"],
+body.light-theme .select-trigger,
+body.light-theme .custom-options {
+    background: #f1f2f6;
+    color: #2d3436;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* 淺色模式下的側邊欄 */
+body.light-theme .sidebar {
+    background: rgba(255, 255, 255, 0.95);
+    border-right: 1px solid rgba(0,0,0,0.1);
+}
+
+body.light-theme .sidebar-header h3,
+body.light-theme .close-btn {
+    color: #2d3436;
+}
+
+/* 淺色模式下的按鈕 (漢堡/書本) */
+body.light-theme .menu-btn,
+body.light-theme .tutorial-btn {
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--neon-blue);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* --- LV.5 大師獎勵：自訂背景樣式 --- */
+body.has-custom-bg {
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+body.has-custom-bg .habit-text,
+body.has-custom-bg .level-info,
+body.has-custom-bg h3 {
+    text-shadow: 0 0 5px rgba(0,0,0,0.8);
+}
+
+/* --- LV.5 自訂背景面板樣式 --- */
+.theme-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2500;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+    backdrop-filter: blur(5px);
+}
+
+.theme-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.theme-content {
+    background: #1a1a2e;
+    border: 1px solid var(--neon-blue);
+    padding: 30px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 0 30px rgba(0, 234, 255, 0.2);
+    position: relative;
+    transform: scale(0.9);
+    transition: 0.3s;
+}
+
+.theme-modal.active .theme-content {
+    transform: scale(1);
+}
+
+.theme-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 15px;
+}
+
+.theme-header h3 {
+    margin: 0;
+    color: var(--neon-blue);
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
+.close-theme-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.theme-section {
+    background: rgba(255,255,255,0.05);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.theme-section h4 {
+    margin: 0 0 15px 0;
+    font-size: 1rem;
+    color: #ddd;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.control-row {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.gradient-row {
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+/* 顏色選擇器美化 */
+input[type="color"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;   
+    appearance: none;    
+    
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    cursor: pointer;
+    background: none;
+    padding: 0;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+    border: 2px solid #fff;
+    border-radius: 10px;
+}
+
+.theme-action-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: var(--neon-blue);
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.theme-action-btn:hover {
+    background: #fff;
+    box-shadow: 0 0 15px var(--neon-blue);
+}
+
+.theme-action-btn.full-width {
+    width: 100%;
+}
+
+.theme-footer {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.reset-bg-btn {
+    background: transparent;
+    border: 1px solid #ff5e78;
+    color: #ff5e78;
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.2s;
+}
+
+.reset-bg-btn:hover {
+    background: #ff5e78;
+    color: white;
+}
+
+/* --- 側邊欄底部設定區 --- */
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.2);
+    margin-top: auto;
+}
+
+.settings-btn {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid var(--neon-blue);
+    color: var(--neon-blue);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: 0.3s;
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
+.settings-btn:hover {
+    background: var(--neon-blue);
+    color: var(--bg-color);
+    box-shadow: 0 0 15px var(--neon-blue);
+}
+
+/* 旋轉動畫：滑鼠移上去時齒輪會轉 */
+.settings-btn:hover i {
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* --- LV.6 Legend 傳說級專屬特效 --- */
+body.legendary-mode::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9990;
+    pointer-events: none;
+    box-sizing: border-box;
+    border: 3px solid transparent;
+    border-radius: 0; 
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.5);
+    
+    animation: screenRGB 6s linear infinite alternate;
+}
+
+@keyframes screenRGB {
+    0%   { border-color: #ffb3ba; box-shadow: inset 0 0 40px rgba(255, 179, 186, 0.6); } /* 粉紅 */
+    20%  { border-color: #ffdfba; box-shadow: inset 0 0 40px rgba(255, 223, 186, 0.6); } /* 粉橘 */
+    40%  { border-color: #ffffba; box-shadow: inset 0 0 40px rgba(255, 255, 186, 0.6); } /* 粉黃 */
+    60%  { border-color: #baffc9; box-shadow: inset 0 0 40px rgba(186, 255, 201, 0.6); } /* 粉綠 */
+    80%  { border-color: #bae1ff; box-shadow: inset 0 0 40px rgba(186, 225, 255, 0.6); } /* 粉藍 */
+    100% { border-color: #eecbff; box-shadow: inset 0 0 40px rgba(238, 203, 255, 0.6); } /* 粉紫 */
+}
+
+/* 2. HUD 文字彩虹特效 */
+body.legendary-mode #level-display {
+    background: linear-gradient(to right, #ff9a9e, #fad0c4, #fad0c4, #a18cd1, #fbc2eb);
+    -webkit-background-clip: text;
+    background-clip: text;
+    
+    color: transparent;
+    animation: rainbowText 5s linear infinite;
+    font-weight: 900;
+}
+
+@keyframes rainbowText {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+/* 3. 滑鼠粒子拖尾 */
+.legend-particle {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: scale(1);
+    opacity: 0.8;
+    animation: particleDrift 1.2s ease-out forwards;
+    filter: blur(2px);
+}
+
+@keyframes particleDrift {
+    0% { 
+        transform: translate(0, 0) scale(1); 
+        opacity: 0.8; 
+    }
+    100% { 
+        transform: translate(var(--drift-x), var(--drift-y)) scale(0); 
+        opacity: 0; 
+    }
+}
